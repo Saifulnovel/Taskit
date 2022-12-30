@@ -1,182 +1,108 @@
-import React, { useContext, useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "react-hot-toast";
-import { Link, useNavigate } from "react-router-dom";
-import { AuthContext } from "../../AuthContext/AuthContext";
-
+import React, { useContext, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'react-hot-toast';
+import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../AuthContext/AuthContext';
 
 const Register = () => {
-  const { createUser, updateUserProfile } = useContext(AuthContext);
+  const { signUp } = useContext(AuthContext)
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const [signUpError, setSignUpError] = useState("");
-  const [imgError, setImgError] = useState("");
-  const imageHostKey = process.env.REACT_APP_imgbb_key;
-  const navigate = useNavigate();
-  const handleUserCreate = (data) => {
-    setSignUpError("");
-    setImgError("");
-    if (data.image[0]) {
-      //create user
-      createUser(data.email, data.password)
-        .then((result) => {
-          toast.success("Account Created Successfully.");
-          const user = result.user;
-          //store image
-          const image = data.image[0];
-          const formData = new FormData();
-          formData.append("image", image);
-          const url = `https://api.imgbb.com/1/upload?key=${imageHostKey}`;
-          fetch(url, {
-            method: "POST",
-            body: formData,
-          })
-            .then((res) => res.json())
-            .then((imgData) => {
-              const userInfo = {
-                displayName: data.name,
-                photoURL: imgData.data.url,
-              };
-              // update user
-              updateUserProfile(userInfo)
-                .then(() => {
-                  // user save database function call
-                  saveUserDatabase(
-                    user.displayName,
-                    user.email,
-                    imgData.data.url
-                  );
-                })
-                .catch((e) => console.error(e));
-            });
-        })
-        .catch((error) => {
-          const errorMessage = error.message;
-          setSignUpError(errorMessage);
-          console.error(error);
-        });
-    } else {
-      setImgError("Photo is required");
-    }
-  };
-  //user save function
-  const saveUserDatabase = (name, email, image) => {
-    const user = { name, email, image };
-    fetch("https://net-book-server.vercel.app/users", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(user),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        navigate("/");
-      });
-  };
+  const [signInError, setSignInError] = useState("");
+  
+   const handleSignin = (data) => {
+     console.log(data);
+     setSignInError("");
+     signUp(data.email, data.password)
+       .then((result) => {
+         const user = result.user;
+         
+         toast.success("Account created Succesfully")
+         navigate('/addtask')
+         
+       
+       })
+       .catch((error) => {
+         console.log(error.message);
+         setSignInError(error.message.split("/")[1]);
+       });
+   };
   return (
-    <section className="min-h-screen flex justify-center items-center py-12">
-      <div className="w-96 bg-white p-11 shadow-2xl rounded-lg">
-        <h2 className="text-xl text-center mb-3">Sign Up</h2>
-        <form onSubmit={handleSubmit(handleUserCreate)}>
-          {/* name field  */}
-          <div className="mb-3">
-            <label>Name</label>
-            <input
-              type="text"
-              className="placeholder:italic placeholder:text-slate-400 block bg-white w-full border border-slate-300 rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              {...register("name", {
-                required: "Name is required",
-              })}
-            />
-            {errors.name && (
-              <p className="text-red-600">{errors.name?.message}</p>
-            )}
-          </div>
+    <div className='bg-cyan-50 p-28'>
+      <div class=" mt-14 w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-800">
+        <div class="px-6 py-4">
+          <h1 className="text-4xl font-serif font-bold text-primary">
+            Please Sign UP {" "}
+          </h1>
 
-          {/* email field  */}
-          <div className="mb-3">
-            <label>Email</label>
-            <input
-              type="email"
-              className="placeholder:italic placeholder:text-slate-400 block bg-white w-full border border-slate-300 rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              {...register("email", {
-                required: "Email is required",
-              })}
-            />
-            {errors.email && (
-              <p className="text-red-600">{errors.email?.message}</p>
-            )}
-          </div>
+          <p class="mt-1 text-center text-gray-500 dark:text-gray-400">
+            Login to your account
+          </p>
 
-          {/* password field  */}
-          <div className="mb-3">
-            <label>Password</label>
-            <input
-              type="password"
-              className="placeholder:italic placeholder:text-slate-400 block bg-white w-full border border-slate-300 rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              {...register("password", {
-                required: "Password is required",
-                minLength: {
-                  value: 6,
-                  message: "Password must be 6 characters long",
-                },
-                pattern: {
-                  value: /(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()\-__+.])/,
-                  message:
-                    "Password must be strong. one capital letter, one number and one special key word (!@#$%^&*()-__+.)",
-                },
-              })}
-            />
-            {errors.password && (
-              <p className="text-red-600">{errors.password?.message}</p>
-            )}
-            {signUpError && <p className="text-red-600">{signUpError}</p>}
-          </div>
-
-          {/* image  */}
-          <div className="mb-3">
-            <div className="file-input">
+          <form onSubmit={handleSubmit(handleSignin)}>
+            <div class="w-full mt-4">
               <input
-                type="file"
-                {...register("image", {
-                  required: "image is required",
-                })}
-                id="file"
-                className="file"
+                class="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-500 bg-white border rounded-lg dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring focus:ring-blue-300"
+                type="email"
+                placeholder="Email Address"
+                aria-label="Email Address"
+                name="email"
+                {...register("email", { required: true })}
               />
-
-              <label
-                htmlFor="file"
-                className="hover:shadow-sm hover:shadow-slate-600"
-              >
-                UPLOAD PHOTO
-              </label>
             </div>
-            {imgError && <p className="text-red-600">{imgError}</p>}
-          </div>
-          <button
-            type="submit"
-            className="py-3 rounded-md bg-gradient-to-r from-cyan-500 to-blue-500 w-full mt-4 hover:shadow-md hover:shadow-slate-900"
-          >
-            SIGN UP
-          </button>
-        </form>
-        {/* go to login page  */}
-        <p className="mt-3 pb-6">
-          Already have an account{" "}
+
+            <div class="w-full mt-4">
+              <input
+                class="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-500 bg-white border rounded-lg dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring focus:ring-blue-300"
+                type="password"
+                placeholder="Password"
+                aria-label="Password"
+                name="password"
+                {...register("password", { required: true, minLength: 6 })}
+              />
+              {errors.password && (
+                <p className="text-warning">
+                  {" "}
+                  {errors.password &&
+                    "Password should be at least 6 character"}{" "}
+                </p>
+              )}
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 items-center justify-between mt-4">
+              <a
+                href="#"
+                class="text-sm text-gray-600 dark:text-gray-200 hover:text-gray-500"
+              >
+                Forget Password?
+              </a>
+
+              <button class="px-6 py-2 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50">
+                Sign Up
+              </button>
+              {signInError && <p className="text-red-600">{signInError}</p>}
+            </div>
+          </form>
+        </div>
+
+        <div class="flex items-center justify-center py-4 text-center bg-gray-50 dark:bg-gray-700">
+          <span class="text-sm text-gray-600 dark:text-gray-200">
+            Don't have an account?{" "}
+          </span>
+
           <Link
-            className="text-orange-600 font-bold hover:text-blue-500"
             to="/login"
+            class="mx-2 text-sm font-bold text-blue-500 dark:text-blue-400 hover:underline"
           >
-            Please Login
+            Login
           </Link>
-        </p>
+        </div>
       </div>
-    </section>
+    </div>
   );
 };
 

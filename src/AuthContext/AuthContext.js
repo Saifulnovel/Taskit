@@ -18,6 +18,8 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const users = "Hiii whatsappp" 
+
   const providerLogin = (provider) => {
     setLoading(true);
     return signInWithPopup(auth, provider);
@@ -51,6 +53,7 @@ const AuthProvider = ({ children }) => {
     providerLogin,
     logOut,
     user,
+    users,
    
     loading,
   };
