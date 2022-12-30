@@ -4,12 +4,12 @@ import {
   getAuth,
   onAuthStateChanged,
   signInWithEmailAndPassword,
-  signInWithPopup,
+  
   signOut,
   
 } from "firebase/auth";
 import app from "../firebase.config";
-// import app from "../../Firebase/firebase.config";
+
 
 export const AuthContext = createContext();
 const auth = getAuth(app);
@@ -18,12 +18,9 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const users = "Hiii whatsappp" 
+   
 
-  const providerLogin = (provider) => {
-    setLoading(true);
-    return signInWithPopup(auth, provider);
-  };
+ 
 
   const signUp = (email, password) => {
     setLoading(true);
@@ -50,10 +47,10 @@ const AuthProvider = ({ children }) => {
   const authInfo = {
     signUp,
     logIn,
-    providerLogin,
+    
     logOut,
     user,
-    users,
+    
    
     loading,
   };
