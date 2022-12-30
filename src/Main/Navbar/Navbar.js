@@ -4,7 +4,10 @@ import { AuthContext } from '../../AuthContext/AuthContext';
 import img from  "./android-chrome-192x192.png"
 
 const Navbar = () => {
-  // const {user} = useContext(AuthContext)
+  const { user, logOut } = useContext(AuthContext)
+  const handleLogout = () => {
+    logOut()
+  }
     return (
       <div className=" border-gray-200 rounded bg-slate-300 dark:bg-gray-800 dark:border-gray-700">
         <nav className="p-3 mx-10">
@@ -63,10 +66,10 @@ const Navbar = () => {
                   </Link>
                 </li>
 
-                {/* {user ? (
+                {user ? (
                   <>
                     <li>
-                      <Link to="/register" className="font-bold">
+                      <Link onClick={handleLogout} className="font-bold">
                         Logout
                       </Link>
                     </li>
@@ -74,12 +77,12 @@ const Navbar = () => {
                 ) : (
                   <>
                     <li>
-                      <Link to="/signin" className="font-bold">
+                      <Link to="/login" className="font-bold">
                         Login
                       </Link>
                     </li>
                   </>
-                )} */}
+                )}
               </ul>
             </div>
           </div>

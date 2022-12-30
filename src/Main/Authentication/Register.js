@@ -19,7 +19,8 @@ const Register = () => {
      setSignInError("");
      signUp(data.email, data.password)
        .then((result) => {
-         const user = result.user;
+       saveUserDb(data?.name, data?.email)
+
          
          toast.success("Account created Succesfully")
          navigate('/addtask')
@@ -30,7 +31,22 @@ const Register = () => {
          console.log(error.message);
          setSignInError(error.message.split("/")[1]);
        });
-   };
+  };
+  
+  const saveUserDb = (name, email) => {
+    const user = { name, email }
+    fetch("http://localhost:5000/users", {
+      method: "POST",
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify(user)
+    })
+      .then(res => res.json())
+      .then(data => {
+      console.log('save user', data);
+    })
+  }
   return (
     <div className='bg-cyan-50 p-28'>
       <div class=" mt-14 w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-800">
@@ -44,6 +60,16 @@ const Register = () => {
           </p>
 
           <form onSubmit={handleSubmit(handleSignin)}>
+            <div class="w-full mt-4">
+              <input
+                class="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-500 bg-white border rounded-lg dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring focus:ring-blue-300"
+                type="text"
+                placeholder="Your Name"
+                aria-label="Your Name"
+                name="name"
+                {...register("name", { required: true })}
+              />
+            </div>
             <div class="w-full mt-4">
               <input
                 class="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-500 bg-white border rounded-lg dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring focus:ring-blue-300"
