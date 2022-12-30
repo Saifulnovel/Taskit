@@ -3,10 +3,12 @@ import React, { useContext } from "react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../AuthContext/AuthContext";
+import useTitle from "../../Hooks/useTitle";
 import Loader from "../Loader/Loader";
 
 const CompeletedTask = () => {
-  const { user } = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
+    useTitle("Completed Task")
  
 
   const {
@@ -28,8 +30,8 @@ const CompeletedTask = () => {
     <Loader></Loader>;
   }
  
-  // };
-  let handleDelete = (_id) => {
+
+  const handleDelete = (_id) => {
     console.log(_id);
     fetch(`http://localhost:5000/allTask/${_id}`, {
       method: "DELETE",
