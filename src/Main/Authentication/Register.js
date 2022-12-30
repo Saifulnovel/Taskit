@@ -1,58 +1,55 @@
-import React, { useContext, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'react-hot-toast';
-import { Link, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../AuthContext/AuthContext';
+import React, { useContext, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-hot-toast";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../../AuthContext/AuthContext";
 
 const Register = () => {
-  const { signUp } = useContext(AuthContext)
-  const navigate = useNavigate()
+  const { signUp } = useContext(AuthContext);
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
   const [signInError, setSignInError] = useState("");
-  
-   const handleSignin = (data) => {
-     console.log(data);
-     setSignInError("");
-     signUp(data.email, data.password)
-       .then((result) => {
-       saveUserDb(data?.name, data?.email)
 
-         
-         toast.success("Account created Succesfully")
-         navigate('/addtask')
-         
-       
-       })
-       .catch((error) => {
-         console.log(error.message);
-         setSignInError(error.message.split("/")[1]);
-       });
+  const handleSignin = (data) => {
+    console.log(data);
+    setSignInError("");
+    signUp(data.email, data.password)
+      .then((result) => {
+        saveUserDb(data?.name, data?.email);
+
+        toast.success("Account created Succesfully");
+        navigate("/addtask");
+      })
+      .catch((error) => {
+        console.log(error.message);
+        setSignInError(error.message.split("/")[1]);
+      });
   };
-  
+
   const saveUserDb = (name, email) => {
-    const user = { name, email }
-    fetch("http://localhost:5000/users", {
+    const user = { name, email };
+    fetch("https://task-hum-server.vercel.app/users", {
       method: "POST",
       headers: {
-        'content-type': 'application/json'
+        "content-type": "application/json",
       },
-      body: JSON.stringify(user)
+      body: JSON.stringify(user),
     })
-      .then(res => res.json())
-      .then(data => {
-      console.log('save user', data);
-    })
-  }
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("save user", data);
+      });
+  };
   return (
-    <div className='bg-cyan-50 p-28'>
+    <div className="bg-cyan-50 p-28">
       <div class=" mt-14 w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-800">
         <div class="px-6 py-4">
           <h1 className="text-4xl font-serif font-bold text-primary">
-            Please Sign UP {" "}
+            Please Sign UP{" "}
           </h1>
 
           <p class="mt-1 text-center text-gray-500 dark:text-gray-400">

@@ -6,10 +6,9 @@ import { AuthContext } from "../../AuthContext/AuthContext";
 import Loader from "../Loader/Loader";
 import { MdFileDownloadDone } from "react-icons/md";
 
-
 const MyTask = () => {
   const { user } = useContext(AuthContext);
-  
+
   const navigate = useNavigate();
   const {
     data = [],
@@ -19,7 +18,7 @@ const MyTask = () => {
     queryKey: ["userPuduct"],
     queryFn: async () => {
       const res = await fetch(
-        `http://localhost:5000/alltask?email=${user?.email}`
+        `https://task-hum-server.vercel.app/alltask?email=${user?.email}`
       );
       const data = await res.json();
       console.log(data);
@@ -30,7 +29,7 @@ const MyTask = () => {
     <Loader />;
   }
   const handleStatusUpdate = (_id) => {
-    fetch(`http://localhost:5000/alltask/${_id}`, {
+    fetch(`https://task-hum-server.vercel.app/alltask/${_id}`, {
       method: "PUT",
       headers: {
         "content-type": "application/json",
@@ -48,7 +47,7 @@ const MyTask = () => {
       });
   };
   let handleDelete = (_id) => {
-    fetch(`http://localhost:5000/alltask/${_id}`, {
+    fetch(`https://task-hum-server.vercel.app/alltask/${_id}`, {
       method: "DELETE",
     })
       .then((res) => res.json())
@@ -109,7 +108,7 @@ const MyTask = () => {
                       onClick={() => handleStatusUpdate(task._id)}
                       className="font-medium btn outline btn-sm py-2 px-2 text-green-600 hover:underline"
                     >
-                     <MdFileDownloadDone/> 
+                      <MdFileDownloadDone />
                     </button>
                   </td>
                   <td className="py-4 px-6">

@@ -7,9 +7,8 @@ import useTitle from "../../Hooks/useTitle";
 import Loader from "../Loader/Loader";
 
 const CompeletedTask = () => {
-    const { user } = useContext(AuthContext);
-    useTitle("Completed Task")
- 
+  const { user } = useContext(AuthContext);
+  useTitle("Completed Task");
 
   const {
     data = [],
@@ -19,7 +18,7 @@ const CompeletedTask = () => {
     queryKey: ["userPuduct"],
     queryFn: async () => {
       const res = await fetch(
-        `http://localhost:5000/allTask?email=${user?.email}`
+        `https://task-hum-server.vercel.app/allTask?email=${user?.email}`
       );
       const data = await res.json();
       // console.log(data);
@@ -29,11 +28,10 @@ const CompeletedTask = () => {
   if (isLoading) {
     <Loader></Loader>;
   }
- 
 
   const handleDelete = (_id) => {
     console.log(_id);
-    fetch(`http://localhost:5000/allTask/${_id}`, {
+    fetch(`https://task-hum-server.vercel.app/allTask/${_id}`, {
       method: "DELETE",
     })
       .then((res) => res.json())
