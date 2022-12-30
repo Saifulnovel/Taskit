@@ -62,7 +62,7 @@ const Navbar = () => {
                 </li>
                 <li>
                   <Link to="/completedtask" className="font-bold">
-                    Completd Task
+                    Completed Task
                   </Link>
                 </li>
 
